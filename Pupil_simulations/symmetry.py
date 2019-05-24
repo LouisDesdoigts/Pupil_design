@@ -1,7 +1,5 @@
 import numpy as np
-import math as m
-
-# How to handle positions outside of the radius
+from math import sin, cos, hypot, atan2
 
 def create_symmetry(A, f):
     # A is array to create symmetry with
@@ -16,31 +14,33 @@ def create_symmetry(A, f):
     # Iterate over each entry in the array
     for i in range(rows):
         for j in range(cols):
-            y = c - i
-            x = c - j
-            # Only perform operation on pixels within the radius
-            if m.hypot(x, y) <= c:
-                for k in range(f):
-                    x, y = calculate_new(x, y, alpha)
-                    B[i][j] += A[i][j]/j
-                # Binarization here
+            x = i - c
+            y = j - c
+            r = hypot(x, y)
+            theta = atan2(y, x)
 
+            # Only perform operation on pixels within the radius
+            if r <= c:
+                for k in range(f):
+                    theta_raw = theta - k*alpha
+                    theta_new = theta_raw if theta_raw >= -np.pi else 2*np.pi + theta_raw
+                    
+                    x_new = round(r*cos(theta_new))
+                    y_new = round(r*sin(theta_new))
+
+                    k = x_new - c
+                    l = y_new - c
+
+                    B[i][j] += A[k][l]/f
+            else:
+                continue
     return B
 
-def calculate_new(x, y, alpha):
-    # alpha in radians please!
-    r = m.hypot(x, y)
-    phi = m.atan2(y, x)
 
-    try:
-        X = round(r * m.sin(phi + alpha) * (1/m.tan(phi + alpha)))
-    except ZeroDivisionError:
-        print(phi, alpha)
-    Y = round(r * m.cos(phi + alpha) * m.tan(phi + alpha))
-
-    return X, Y
-
-A = np.zeros((10,10))
-A[3][3] = 10
-B = create_symmetry(A, 4)
+# A = np.zeros((15,15))
+# A[3][3] = 10
+# B = create_symmetry(A, 10)
+# print(np.sum(B))
+# print(A)
+# print(B)
 
