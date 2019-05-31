@@ -1,7 +1,7 @@
 import numpy as np
 from math import sin, cos, hypot, atan2
 
-def create_symmetry(A, f):
+def create_symmetry(A, f, binarise=False):
     # A is array to create symmetry with
     # f is the number of rotations
 
@@ -10,6 +10,10 @@ def create_symmetry(A, f):
     c = rows//2
     B = np.zeros((rows, cols)) 
     alpha = 2*np.pi/f 
+    
+    max_val = np.max(A)
+    min_val = np.min(A)
+    threshold = max_val/2
 
     # Iterate over each entry in the array
     for i in range(rows):
@@ -32,6 +36,12 @@ def create_symmetry(A, f):
                     l = y_new - c
 
                     B[i][j] += A[k][l]/f
+                    
+                # This doesn't seem to work - Returns the original pupil
+                # Binarise the image, threshold is half the peak value across whole array
+#                 if binarise:
+#                     B[i][j] = max_val if B[i][j] >= threshold else min_val
+                    
             else:
                 continue
     return B

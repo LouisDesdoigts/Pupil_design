@@ -10,9 +10,7 @@ def model_FT(mask, mask_size, chip_dim, wavels, foc_length, pix_size):
     pix_size: Detector pitch, size of pixel unit cell (m)
     Note: Assumes all wavelengths have equal intesity (add intesities later)
     """
-    
-    print(mask.shape)
-    
+        
     grid_size = mask.shape[1]           
     plate_scale = pix_size / foc_length    # Radians per pixel
     im_out = np.zeros((chip_dim,chip_dim))
